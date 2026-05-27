@@ -2,9 +2,12 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { BookingWidget } from "@/components/booking/BookingWidget";
 
-export default async function CompanyBookingPage({ params }: { params: { companySlug: string } }) {
+export default async function CompanyBookingPage(props: { params: Promise<{ companySlug: string }> }) {
+  const params = await props.params;
+  const companySlug = params.companySlug;
+
   const company = await prisma.company.findUnique({
-    where: { slug: params.companySlug },
+    where: { slug: companySlug },
   });
 
   if (!company) {

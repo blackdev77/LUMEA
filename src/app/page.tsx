@@ -127,7 +127,72 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
+      {/* Pricing Section */}
+      <section id="precos" className="py-24 bg-background">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold font-heading">Planos transparentes para o seu negócio</h2>
+            <p className="text-muted-foreground">Escolha o plano ideal e eleve a experiência dos seus clientes.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Plano Básico */}
+            <div className="bg-card p-8 rounded-3xl border shadow-sm flex flex-col">
+              <h3 className="font-bold text-2xl mb-2">Básico</h3>
+              <p className="text-muted-foreground mb-6 text-sm">Ideal para profissionais autônomos iniciando.</p>
+              <div className="mb-8">
+                <span className="text-4xl font-bold font-heading">R$ 49</span>
+                <span className="text-muted-foreground">/mês</span>
+              </div>
+              <ul className="space-y-4 mb-8 flex-1">
+                <li className="flex items-center text-sm">
+                  <CheckCircle2 size={18} className="text-primary mr-3" /> Agenda Inteligente
+                </li>
+                <li className="flex items-center text-sm">
+                  <CheckCircle2 size={18} className="text-primary mr-3" /> Até 100 agendamentos/mês
+                </li>
+                <li className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle2 size={18} className="mr-3 opacity-50" /> Link de reserva público
+                </li>
+              </ul>
+              <Link href="/register" className="w-full">
+                <Button variant="outline" className="w-full h-12 rounded-xl">Começar Básico</Button>
+              </Link>
+            </div>
+
+            {/* Plano Premium */}
+            <div className="bg-card p-8 rounded-3xl border-2 border-primary shadow-xl relative flex flex-col transform md:-translate-y-4">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                Mais Popular
+              </div>
+              <h3 className="font-bold text-2xl mb-2">Premium</h3>
+              <p className="text-muted-foreground mb-6 text-sm">A solução completa para clínicas de alto nível.</p>
+              <div className="mb-8">
+                <span className="text-4xl font-bold font-heading text-primary">R$ 149</span>
+                <span className="text-muted-foreground">/mês</span>
+              </div>
+              <ul className="space-y-4 mb-8 flex-1">
+                <li className="flex items-center text-sm">
+                  <CheckCircle2 size={18} className="text-primary mr-3" /> Agendamentos ilimitados
+                </li>
+                <li className="flex items-center text-sm">
+                  <CheckCircle2 size={18} className="text-primary mr-3" /> Profissionais ilimitados
+                </li>
+                <li className="flex items-center text-sm">
+                  <CheckCircle2 size={18} className="text-primary mr-3" /> Lembretes automáticos (WhatsApp)
+                </li>
+                <li className="flex items-center text-sm">
+                  <CheckCircle2 size={18} className="text-primary mr-3" /> Dashboard financeiro completo
+                </li>
+              </ul>
+              <Link href="/register" className="w-full">
+                <Button className="w-full h-12 rounded-xl">Teste Grátis por 14 dias</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer Público */}
       <footer className="mt-auto py-12 border-t bg-card">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">

@@ -12,6 +12,10 @@ model Company {
   name        String
   slug        String   @unique
   logo        String?
+  bio         String?
+  phone       String?
+  address     String?
+  settings    Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -55,7 +55,7 @@ export function Sidebar({ user }: SidebarProps) {
       <div className="p-4 border-t">
         <div className="flex items-center space-x-3 px-3 py-2 mb-2">
           <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-            {user?.name?.charAt(0) || "U"}
+            {user?.name?.charAt(0).toUpperCase() || "U"}
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-medium leading-none">{user?.name}</span>

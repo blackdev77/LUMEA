@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button/Button";
+import { NewAppointmentButton } from "@/components/appointments/NewAppointmentButton";
 
 export default async function AppointmentsPage() {
   const session = await getServerSession(authOptions);
@@ -22,6 +22,9 @@ export default async function AppointmentsPage() {
     include: { customer: true, service: true, professional: true },
   });
 
+  const customers = await prisma.customer.findMany({ where: { companyId: user.companyId } });
+  const services = await prisma.service.findMany({ where: { companyId: user.companyId } });
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
@@ -29,7 +32,7 @@ export default async function AppointmentsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Agendamentos</h1>
           <p className="text-muted-foreground">Gerencie a agenda da sua clínica.</p>
         </div>
-        <Button>+ Novo Agendamento</Button>
+        <NewAppointmentButton customers={customers} services={services} />
       </div>
 
       <Card>
