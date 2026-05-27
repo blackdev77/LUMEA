@@ -50,12 +50,27 @@ export async function POST(req: Request) {
       });
     }
 
+    // In a real app we'd let them choose a professional.
+    // For this MVP, let's grab the first professional or create a default one.
+    let professional = await prisma.professional.findFirst({ where: { companyId } });
+    if (!professional) {
+      professional = await prisma.professional.create({
+        data: {
+          companyId,
+          name: "Profissional Padrão",
+          specialty: "Clínico Geral",
+          bio: "Profissional de atendimento da clínica."
+        }
+      });
+    }
+
     // Create appointment
     const appointment = await prisma.appointment.create({
       data: {
         companyId,
         customerId: customer.id,
         serviceId: service.id,
+        professionalId: professional.id,
         date: startDateTime, // Prisma Date logic
         startTime: startDateTime,
         endTime: new Date(startDateTime.getTime() + service.duration * 60000),
