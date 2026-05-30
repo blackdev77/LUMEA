@@ -12,7 +12,7 @@ import { signIn } from "next-auth/react";
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    companyName: "",
+    clinicName: "",
     slug: "",
     name: "",
     email: "",
@@ -23,7 +23,7 @@ export default function RegisterPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (e.target.name === "companyName") {
+    if (e.target.name === "clinicName") {
       setFormData(prev => ({
         ...prev,
         slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "")
@@ -79,7 +79,7 @@ export default function RegisterPage() {
             <h1 className="font-heading font-bold text-4xl tracking-tighter">LUMEA</h1>
           </div>
           <p className="text-3xl font-heading font-medium leading-tight mb-6">
-            Comece a transformar seu negócio agora.
+            Comece a transformar sua clínica agora.
           </p>
           <p className="text-muted-foreground text-lg mb-8">
             Crie sua conta em segundos e tenha acesso a uma plataforma completa de gestão de agendamentos.
@@ -87,7 +87,7 @@ export default function RegisterPage() {
           <ul className="space-y-4">
             <li className="flex items-center space-x-3 text-sm text-muted-foreground">
               <div className="w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs">✓</div>
-              <span>Agendamento online 24/7 para seus clientes</span>
+              <span>Agendamento online 24/7 para seus pacientes</span>
             </li>
             <li className="flex items-center space-x-3 text-sm text-muted-foreground">
               <div className="w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs">✓</div>
@@ -112,7 +112,7 @@ export default function RegisterPage() {
 
           <Card className="border-none shadow-none bg-transparent">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-2xl">Cadastre sua empresa</CardTitle>
+              <CardTitle className="text-2xl">Cadastre sua clínica</CardTitle>
               <CardDescription>Preencha os dados abaixo para criar sua conta grátis.</CardDescription>
             </CardHeader>
             
@@ -126,10 +126,10 @@ export default function RegisterPage() {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <Input
-                    label="Nome da Empresa"
-                    name="companyName"
+                    label="Nome da Clínica"
+                    name="clinicName"
                     placeholder="Clínica XYZ"
-                    value={formData.companyName}
+                    value={formData.clinicName}
                     onChange={handleChange}
                     required
                   />

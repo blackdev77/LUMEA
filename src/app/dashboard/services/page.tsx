@@ -10,7 +10,7 @@ export default async function ServicesPage() {
   const user = await prisma.user.findUnique({ where: { email: session?.user?.email as string } });
   
   const services = await prisma.service.findMany({
-    where: { companyId: user?.companyId },
+    where: { clinicId: user?.clinicId },
     orderBy: { createdAt: "desc" },
   });
 

@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/Button/Button";
 import { NewAppointmentModal } from "./NewAppointmentModal";
 
 interface Props {
-  customers: any[];
+  patients: any[];
   services: any[];
 }
 
-export function NewAppointmentButton({ customers, services }: Props) {
+export function NewAppointmentButton({ patients, services }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -18,7 +18,7 @@ export function NewAppointmentButton({ customers, services }: Props) {
       <NewAppointmentModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        customers={customers}
+        patients={patients}
         services={services}
       />
     </>

@@ -19,31 +19,30 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { name, slug, phone, address, bio, settings } = body;
+    const { name, slug, phone, address, settings } = body;
 
     if (!name || !slug) {
       return NextResponse.json({ error: "Nome e URL Slug são obrigatórios." }, { status: 400 });
     }
 
-    // Verifica se o slug já está em uso por OUTRA empresa
-    const existingCompany = await prisma.company.findUnique({ where: { slug } });
-    if (existingCompany && existingCompany.id !== user.companyId) {
+    // Verifica se o slug já está em uso por OUTRA clínica
+    const existingClinic = await prisma.clinic.findUnique({ where: { slug } });
+    if (existingClinic && existingClinic.id !== user.clinicId) {
       return NextResponse.json({ error: "A URL Slug escolhida já está em uso." }, { status: 400 });
     }
 
-    const company = await prisma.company.update({
-      where: { id: user.companyId },
+    const clinic = await prisma.clinic.update({
+      where: { id: user.clinicId },
       data: {
         name,
         slug,
         phone,
         address,
-        bio,
         settings: settings || {}
       }
     });
 
-    return NextResponse.json({ success: true, company });
+    return NextResponse.json({ success: true, clinic });
 
   } catch (error: any) {
     console.error("Update Settings Error:", error);

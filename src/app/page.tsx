@@ -33,7 +33,7 @@ export default function Home() {
               <span className="text-xs font-medium">Nova Experiência em Agendamentos</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold font-heading tracking-tighter leading-[1.1]">
-              O agendamento premium que o seu <span className="text-gradient">negócio merece.</span>
+              O agendamento premium que a sua <span className="text-gradient">clínica merece.</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto md:mx-0">
               A plataforma completa para clínicas, salões e consultórios que não abrem mão de uma experiência sofisticada. Receba agendamentos 24/7 e gerencie sua agenda com perfeição.
@@ -106,7 +106,7 @@ export default function Home() {
                 <Zap size={24} />
               </div>
               <h3 className="font-semibold text-lg mb-2">Agendamento 24/7</h3>
-              <p className="text-muted-foreground text-sm">Seu cliente agenda pelo link exclusivo da sua empresa a qualquer hora do dia ou da noite.</p>
+              <p className="text-muted-foreground text-sm">Seu paciente agenda pelo link exclusivo da sua clínica a qualquer hora do dia ou da noite.</p>
             </div>
 
             <div className="bg-card p-6 rounded-2xl border shadow-sm hover:shadow-md transition-shadow">
@@ -131,7 +131,7 @@ export default function Home() {
       <section id="precos" className="py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold font-heading">Planos transparentes para o seu negócio</h2>
+            <h2 className="text-3xl md:text-4xl font-bold font-heading">Planos transparentes para a sua clínica</h2>
             <p className="text-muted-foreground">Escolha o plano ideal e eleve a experiência dos seus clientes.</p>
           </div>
           

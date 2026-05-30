@@ -18,24 +18,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
     }
 
-    const { customerId, serviceId, date, time, notes } = await req.json();
+    const { patientId, serviceId, date, time, notes } = await req.json();
 
-    if (!customerId || !serviceId || !date || !time) {
+    if (!patientId || !serviceId || !date || !time) {
       return NextResponse.json({ error: "Campos obrigatórios faltando." }, { status: 400 });
     }
 
     const startDateTime = new Date(`${date}T${time}:00`);
-    const service = await prisma.service.findUnique({ where: { id: serviceId } });
+    const service = await prisma.service.findFirst({ 
+      where: { id: serviceId, clinicId: user.clinicId } 
+    });
 
     if (!service) {
-      return NextResponse.json({ error: "Serviço não encontrado." }, { status: 404 });
+      return NextResponse.json({ error: "Serviço não encontrado ou acesso negado." }, { status: 404 });
     }
 
-    let professional = await prisma.professional.findFirst({ where: { companyId: user.companyId } });
+    const patient = await prisma.patient.findFirst({
+      where: { id: patientId, clinicId: user.clinicId }
+    });
+
+    if (!patient) {
+      return NextResponse.json({ error: "Paciente não encontrado ou acesso negado." }, { status: 404 });
+    }
+
+    let professional = await prisma.professional.findFirst({ where: { clinicId: user.clinicId } });
     if (!professional) {
       professional = await prisma.professional.create({
         data: {
-          companyId: user.companyId,
+          clinicId: user.clinicId,
           name: "Profissional Padrão",
           specialty: "Geral",
         }
@@ -44,8 +54,8 @@ export async function POST(req: Request) {
 
     const appointment = await prisma.appointment.create({
       data: {
-        companyId: user.companyId,
-        customerId,
+        clinicId: user.clinicId,
+        patientId,
         serviceId,
         professionalId: professional.id,
         date: startDateTime,

@@ -51,7 +51,7 @@ export default function LoginPage() {
             <h1 className="font-heading font-bold text-4xl tracking-tighter">LUMEA</h1>
           </div>
           <p className="text-3xl font-heading font-medium leading-tight mb-6">
-            A gestão premium que o seu negócio merece.
+            A gestão premium que a sua clínica merece.
           </p>
           <p className="text-muted-foreground text-lg">
             Acesse sua conta para gerenciar seus agendamentos, clientes e faturamento em um só lugar.
@@ -113,7 +113,7 @@ export default function LoginPage() {
                   Entrar
                 </Button>
                 <div className="text-sm text-center text-muted-foreground">
-                  Não tem uma conta? <Link href="/register" className="font-medium text-primary hover:underline">Cadastre sua empresa</Link>
+                  Não tem uma conta? <Link href="/register" className="font-medium text-primary hover:underline">Cadastre sua clínica</Link>
                 </div>
               </CardFooter>
             </form>

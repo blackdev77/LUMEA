@@ -2,17 +2,19 @@ import "next-auth";
 import { Role } from "@prisma/client";
 
 declare module "next-auth" {
-  interface User {
-    role?: Role;
-    companyId?: string;
+  interface User extends DefaultUser {
+    role: Role;
+    clinicId: string;
+    twoFactorEnabled: boolean;
   }
 
   interface Session {
-    user: User & {
+    user: {
       id: string;
-      role?: Role;
-      companyId?: string;
-    };
+      role: Role;
+      clinicId: string;
+      twoFactorEnabled: boolean;
+    } & DefaultSession["user"];
   }
 }
 
@@ -20,6 +22,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     role?: Role;
-    companyId?: string;
+    clinicId?: string;
+    twoFactorEnabled?: boolean;
   }
 }

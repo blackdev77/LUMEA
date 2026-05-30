@@ -7,23 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Company {
+model Clinic {
   id          String   @id @default(cuid())
   name        String
   slug        String   @unique
   logo        String?
-  bio         String?
+  document    String?
   phone       String?
+  email       String?
   address     String?
   settings    Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  users         User[]
-  customers     Customer[]
-  services      Service[]
-  professionals Professional[]
-  appointments  Appointment[]
+  users                User[]
+  patients             Patient[]
+  services             Service[]
+  professionals        Professional[]
+  appointments         Appointment[]
+  notificationSettings NotificationSetting[]
+  payments             Payment[]
+  subscription         Subscription?
 }
 
 enum Role {
@@ -31,6 +35,7 @@ enum Role {
   MANAGER
   RECEPTIONIST
   PROFESSIONAL
+  SUPERADMIN
 }
 
 model User {
@@ -41,9 +46,13 @@ model User {
   password      String?
   image         String?
   role          Role      @default(RECEPTIONIST)
+  lastLogin     DateTime?
+
+  twoFactorSecret  String?
+  twoFactorEnabled Boolean @default(false)
   
-  companyId     String
-  company       Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  clinicId      String
+  clinic        Clinic    @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   
   professional  Professional?
   
@@ -54,16 +63,18 @@ model User {
   sessions      Session[]
 }
 
-model Customer {
+model Patient {
   id        String   @id @default(cuid())
   name      String
   email     String?
   phone     String?
-  cpf       String?
+  document  String?
+  birthDate DateTime?
+  gender    String?
   notes     String?
   
-  companyId String
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  clinicId  String
+  clinic    Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   
   appointments Appointment[]
   
@@ -77,9 +88,11 @@ model Service {
   description String?
   duration    Int      // in minutes
   price       Float
+  type        String   @default("CONSULTA") // CONSULTA, PROCEDIMENTO, SESSAO, RETORNO
+  isActive    Boolean  @default(true)
   
-  companyId   String
-  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  clinicId    String
+  clinic      Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   
   appointments Appointment[]
   
@@ -88,21 +101,25 @@ model Service {
 }
 
 model Professional {
-  id          String   @id @default(cuid())
-  name        String
-  specialty   String?
-  bio         String?
+  id             String   @id @default(cuid())
+  name           String
+  specialty      String?
+  registry       String?  // CRM, CRO, etc.
+  phone          String?
+  bio            String?
+  scheduleConfig Json?
   
-  userId      String?  @unique
-  user        User?    @relation(fields: [userId], references: [id])
+  userId         String?  @unique
+  user           User?    @relation(fields: [userId], references: [id])
   
-  companyId   String
-  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  clinicId       String
+  clinic         Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   
-  appointments Appointment[]
+  appointments   Appointment[]
+  notes          AppointmentNote[]
   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum AppointmentStatus {
@@ -119,14 +136,16 @@ model Appointment {
   date           DateTime // Contains the date
   startTime      DateTime // Start time exact
   endTime        DateTime // End time exact
-  status         AppointmentStatus @default(PENDING)
+  status         AppointmentStatus @default(CONFIRMED)
+  source         String   @default("INTERNAL") // INTERNAL, ONLINE
   notes          String?
+  isReturn       Boolean  @default(false)
   
-  companyId      String
-  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  clinicId       String
+  clinic         Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   
-  customerId     String
-  customer       Customer @relation(fields: [customerId], references: [id])
+  patientId      String
+  patient        Patient  @relation(fields: [patientId], references: [id])
   
   serviceId      String
   service        Service  @relation(fields: [serviceId], references: [id])
@@ -134,8 +153,49 @@ model Appointment {
   professionalId String
   professional   Professional @relation(fields: [professionalId], references: [id])
   
+  appointmentNote AppointmentNote?
+  payment         Payment?
+  
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model AppointmentNote {
+  id             String   @id @default(cuid())
+  content        String   @db.Text
+  
+  appointmentId  String   @unique
+  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id])
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Payment {
+  id             String   @id @default(cuid())
+  amount         Float
+  method         String   // DINHEIRO, CARTAO_CREDITO, CARTAO_DEBITO, PIX, CONVENIO
+  paymentDate    DateTime?
+  notes          String?
+  
+  clinicId       String
+  clinic         Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  appointmentId  String   @unique
+  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+}
+
+model NotificationSetting {
+  id             String   @id @default(cuid())
+  type           String   // REMINDER_BEFORE_APPOINTMENT, POST_APPOINTMENT
+  channel        String   // WHATSAPP, SMS, EMAIL
+  minutesBefore  Int      // 1440 for 24h
+  isActive       Boolean  @default(false)
+  template       String
+  
+  clinicId       String
+  clinic         Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
 }
 
 // NextAuth Next.js standard models
@@ -173,3 +233,32 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Subscription {
+  id               String   @id @default(cuid())
+  clinicId         String   @unique
+  clinic           Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  
+  mpSubscriptionId String?  @unique
+  mpPayerId        String?
+  
+  status           String   @default("INACTIVE") // INACTIVE, ACTIVE, PAST_DUE, CANCELED
+  plan             String   @default("PRO")
+  price            Float    @default(0)
+  
+  nextBillingDate  DateTime?
+  lastPaymentDate  DateTime?
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model WebhookEvent {
+  id            String   @id @default(cuid())
+  mpEventId     String   @unique
+  type          String
+  status        String   @default("PENDING") // PENDING, PROCESSED, FAILED
+  payload       Json
+  createdAt     DateTime @default(now())
+}
+

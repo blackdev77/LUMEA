@@ -8,22 +8,22 @@ import { Input } from "@/components/ui/Input/Input";
 import { CheckCircle2, AlertTriangle } from "lucide-react";
 
 interface Props {
-  company: any;
+  clinic: any;
   user: any;
 }
 
-export function SettingsForm({ company, user }: Props) {
+export function SettingsForm({ clinic, user }: Props) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const [formData, setFormData] = useState({
-    name: company.name || "",
-    slug: company.slug || "",
-    phone: company.phone || "",
-    address: company.address || "",
-    bio: company.bio || "",
+    name: clinic.name || "",
+    slug: clinic.slug || "",
+    phone: clinic.phone || "",
+    address: clinic.address || "",
+    bio: clinic.bio || "",
   });
 
   const [adminData, setAdminData] = useState({
@@ -76,15 +76,15 @@ export function SettingsForm({ company, user }: Props) {
         </div>
       )}
 
-      {/* Dados do Negócio */}
+      {/* Dados da Clínica */}
       <Card>
         <CardHeader>
-          <CardTitle>Dados do Negócio</CardTitle>
+          <CardTitle>Dados da Clínica</CardTitle>
           <CardDescription>Informações públicas que aparecerão na sua página de agendamentos.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Input
-            label="Nome da Empresa *"
+            label="Nome da Clínica *"
             required
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -94,7 +94,7 @@ export function SettingsForm({ company, user }: Props) {
             <textarea
               rows={3}
               className="w-full flex rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              placeholder="Fale um pouco sobre o seu negócio..."
+              placeholder="Fale um pouco sobre a sua clínica..."
               value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
             />
@@ -113,7 +113,7 @@ export function SettingsForm({ company, user }: Props) {
           </div>
           <div className="p-4 bg-muted/50 rounded-lg border">
             <Input
-              label="URL Slug do Negócio *"
+              label="URL Slug da Clínica *"
               required
               value={formData.slug}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}

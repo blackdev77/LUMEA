@@ -12,11 +12,11 @@ export default async function DashboardPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    include: { company: true },
+    include: { clinic: true },
   });
 
   if (!user) return null;
-  const companyId = user.companyId;
+  const clinicId = user.clinicId;
 
   // Real Database Queries
   const todayStart = new Date();
@@ -26,7 +26,7 @@ export default async function DashboardPage() {
 
   const appointmentsToday = await prisma.appointment.count({
     where: {
-      companyId,
+      clinicId,
       date: {
         gte: todayStart,
         lte: todayEnd,
@@ -34,21 +34,21 @@ export default async function DashboardPage() {
     },
   });
 
-  const totalCustomers = await prisma.customer.count({
-    where: { companyId },
+  const totalPatients = await prisma.patient.count({
+    where: { clinicId },
   });
 
   const recentAppointments = await prisma.appointment.findMany({
-    where: { companyId },
+    where: { clinicId },
     orderBy: { createdAt: "desc" },
     take: 5,
-    include: { customer: true, service: true },
+    include: { patient: true, service: true },
   });
 
   // Calculate estimated revenue for today
   const todaysAppointments = await prisma.appointment.findMany({
     where: {
-      companyId,
+      clinicId,
       date: { gte: todayStart, lte: todayEnd },
       status: { notIn: ["CANCELED", "NO_SHOW"] },
     },
@@ -61,13 +61,30 @@ export default async function DashboardPage() {
     <div className="space-y-8 max-w-7xl mx-auto">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Visão Geral</h1>
-        <p className="text-muted-foreground">Acompanhe o desempenho do seu negócio em tempo real.</p>
+        <p className="text-muted-foreground">Acompanhe suas consultas, pacientes e faturamento em tempo real.</p>
       </div>
+      
+      {appointmentsToday === 0 && totalPatients === 0 && (
+        <Card className="bg-primary/5 border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-lg">👋 Bem-vindo ao LUMEA! Comece por aqui:</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2"><div className="w-4 h-4 rounded border border-primary flex items-center justify-center" /> <span className="text-sm font-medium">Cadastre seus profissionais</span> <span className="text-xs text-muted-foreground">(Adicione os profissionais de saúde e suas especialidades)</span></div>
+              <div className="flex items-center gap-2"><div className="w-4 h-4 rounded border border-primary flex items-center justify-center" /> <span className="text-sm font-medium">Configure seus horários</span> <span className="text-xs text-muted-foreground">(Defina os dias e horários de funcionamento da clínica)</span></div>
+              <div className="flex items-center gap-2"><div className="w-4 h-4 rounded border border-primary flex items-center justify-center" /> <span className="text-sm font-medium">Cadastre seus serviços</span> <span className="text-xs text-muted-foreground">(Consultas, exames ou procedimentos)</span></div>
+              <div className="flex items-center gap-2"><div className="w-4 h-4 rounded border border-primary flex items-center justify-center" /> <span className="text-sm font-medium">Ative lembretes</span> <span className="text-xs text-muted-foreground">(Reduza faltas ativando o envio automático via WhatsApp)</span></div>
+              <div className="flex items-center gap-2"><div className="w-4 h-4 rounded border border-primary flex items-center justify-center" /> <span className="text-sm font-medium">Compartilhe seu link</span> <span className="text-xs text-muted-foreground">(Envie para seus pacientes agendarem sozinhos)</span></div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Agendamentos Hoje</CardTitle>
+            <CardTitle className="text-sm font-medium">Consultas Hoje</CardTitle>
             <CalendarIcon size={16} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -78,11 +95,11 @@ export default async function DashboardPage() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Pacientes</CardTitle>
             <Users size={16} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalCustomers}</div>
+            <div className="text-2xl font-bold">{totalPatients}</div>
             <p className="text-xs text-muted-foreground mt-1">Cadastrados na base</p>
           </CardContent>
         </Card>
@@ -102,14 +119,14 @@ export default async function DashboardPage() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Ocupação</CardTitle>
+            <CardTitle className="text-sm font-medium">Taxa de Comparecimento</CardTitle>
             <TrendingUp size={16} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {appointmentsToday > 0 ? "Alta" : "Vazia"}
+              {appointmentsToday > 0 ? "Aguardando" : "N/A"}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Baseado nos horários hoje</p>
+            <p className="text-xs text-muted-foreground mt-1">Concluídas / Agendadas</p>
           </CardContent>
         </Card>
       </div>
@@ -117,7 +134,7 @@ export default async function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Últimos Agendamentos</CardTitle>
+            <CardTitle>Últimas Consultas</CardTitle>
           </CardHeader>
           <CardContent>
             {recentAppointments.length === 0 ? (
@@ -125,9 +142,9 @@ export default async function DashboardPage() {
                 <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
                   <CalendarCheck size={24} className="text-muted-foreground" />
                 </div>
-                <p className="text-sm font-medium">Nenhum agendamento ainda.</p>
-                <p className="text-xs text-muted-foreground mt-1 mb-4">Compartilhe seu link público para começar.</p>
-                <Link href={`/${user.company.slug}`} target="_blank">
+                <p className="text-sm font-medium">Nenhuma consulta agendada ainda.</p>
+                <p className="text-xs text-muted-foreground mt-1 mb-4">Compartilhe seu link público para pacientes agendarem.</p>
+                <Link href={`/${user.clinic.slug}`} target="_blank">
                   <Button variant="outline" size="sm">Ver minha página pública</Button>
                 </Link>
               </div>
@@ -136,7 +153,7 @@ export default async function DashboardPage() {
                 {recentAppointments.map(apt => (
                   <div key={apt.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
                     <div>
-                      <p className="text-sm font-medium">{apt.customer.name}</p>
+                      <p className="text-sm font-medium">{apt.patient.name}</p>
                       <p className="text-xs text-muted-foreground">{apt.service.name}</p>
                     </div>
                     <div className="text-right">
@@ -166,15 +183,15 @@ export default async function DashboardPage() {
             <div className="p-4 bg-primary/10 text-primary rounded-xl mb-4">
               <Zap size={32} />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Pronto para receber clientes?</h3>
+            <h3 className="text-lg font-semibold mb-2">Pronto para receber pacientes?</h3>
             <p className="text-sm text-muted-foreground mb-6">
-              Envie este link no seu WhatsApp ou Instagram para que seus clientes possam agendar horários sozinhos.
+              Envie este link no seu WhatsApp ou Instagram para que seus pacientes possam agendar horários sozinhos.
             </p>
             <div className="flex w-full items-center space-x-2">
               <div className="bg-muted px-4 py-2 rounded-md border text-sm font-mono flex-1 text-left truncate">
-                lumea.app/{user.company.slug}
+                lumea.app/{user.clinic.slug}
               </div>
-              <Link href={`/${user.company.slug}`} target="_blank">
+              <Link href={`/${user.clinic.slug}`} target="_blank">
                 <Button>Visitar</Button>
               </Link>
             </div>

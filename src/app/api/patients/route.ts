@@ -24,21 +24,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Nome e Telefone são obrigatórios." }, { status: 400 });
     }
 
-    const customer = await prisma.customer.create({
+    const patient = await prisma.patient.create({
       data: {
-        companyId: user.companyId,
+        clinicId: user.clinicId,
         name,
         email: email || null,
         phone,
       }
     });
 
-    return NextResponse.json({ success: true, customer });
+    return NextResponse.json({ success: true, patient });
 
   } catch (error: any) {
-    console.error("Create Customer Error:", error);
+    console.error("Create Patient Error:", error);
     return NextResponse.json(
-      { error: "Ocorreu um erro ao criar o cliente." },
+      { error: "Ocorreu um erro ao criar o paciente." },
       { status: 500 }
     );
   }

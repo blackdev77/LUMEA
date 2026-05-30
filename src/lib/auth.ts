@@ -37,7 +37,8 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           role: user.role,
-          companyId: user.companyId,
+          clinicId: user.clinicId,
+          twoFactorEnabled: user.twoFactorEnabled,
         };
       }
     })
@@ -54,7 +55,8 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
-        token.companyId = user.companyId;
+        token.clinicId = user.clinicId;
+        token.twoFactorEnabled = user.twoFactorEnabled;
       }
       return token;
     },
@@ -62,7 +64,8 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as any;
-        session.user.companyId = token.companyId as string;
+        session.user.clinicId = token.clinicId as string;
+        session.user.twoFactorEnabled = token.twoFactorEnabled as boolean;
       }
       return session;
     }

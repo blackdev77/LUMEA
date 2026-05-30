@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input/Input";
 import { Card, CardContent } from "@/components/ui/Card/Card";
 import { Calendar as CalendarIcon, Clock, CheckCircle2 } from "lucide-react";
 
-export function BookingWidget({ company }: { company: any }) {
+export function BookingWidget({ clinic }: { clinic: any }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -27,7 +27,7 @@ export function BookingWidget({ company }: { company: any }) {
       const res = await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, companyId: company.id }),
+        body: JSON.stringify({ ...formData, clinicId: clinic.id }),
       });
       
       if (res.ok) {

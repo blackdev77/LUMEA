@@ -3,16 +3,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { NewCustomerButton } from "@/components/customers/NewCustomerModal";
+import { NewPatientButton } from "@/components/patients/NewPatientModal";
 import { Button } from "@/components/ui/Button/Button";
 import { Edit2, Trash2 } from "lucide-react";
+import Link from "next/link";
 
-export default async function CustomersPage() {
+export default async function PatientsPage() {
   const session = await getServerSession(authOptions);
   const user = await prisma.user.findUnique({ where: { email: session?.user?.email as string } });
   
-  const customers = await prisma.customer.findMany({
-    where: { companyId: user?.companyId },
+  const patients = await prisma.patient.findMany({
+    where: { clinicId: user?.clinicId },
     orderBy: { createdAt: "desc" },
   });
 
@@ -20,10 +21,10 @@ export default async function CustomersPage() {
     <div className="space-y-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
-          <p className="text-muted-foreground">Gerencie a base de clientes do seu negócio.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Pacientes</h1>
+          <p className="text-muted-foreground">Gerencie a base de pacientes da sua clínica.</p>
         </div>
-        <NewCustomerButton />
+        <NewPatientButton />
       </div>
       <Card>
         <CardContent className="p-0">
@@ -37,26 +38,25 @@ export default async function CustomersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {customers.length === 0 ? (
+              {patients.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                    Nenhum cliente cadastrado.
+                    Nenhum paciente cadastrado.
                   </TableCell>
                 </TableRow>
               ) : (
-                customers.map(customer => (
-                  <TableRow key={customer.id}>
-                    <TableCell className="font-medium">{customer.name}</TableCell>
-                    <TableCell>{customer.email || "-"}</TableCell>
-                    <TableCell>{customer.phone || "-"}</TableCell>
+                patients.map(patient => (
+                  <TableRow key={patient.id}>
+                    <TableCell className="font-medium">{patient.name}</TableCell>
+                    <TableCell>{patient.email || "-"}</TableCell>
+                    <TableCell>{patient.phone || "-"}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <Edit2 size={14} className="text-muted-foreground" />
-                        </Button>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-red-200 hover:bg-red-50">
-                          <Trash2 size={14} className="text-red-500" />
-                        </Button>
+                        <Link href={`/dashboard/patients/${patient.id}`}>
+                          <Button variant="outline" size="sm" className="text-primary border-primary/20 hover:bg-primary/10">
+                            Ver Perfil
+                          </Button>
+                        </Link>
                       </div>
                     </TableCell>
                   </TableRow>

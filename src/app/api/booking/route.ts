@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    const { companyId, name, email, phone, date, time } = data;
+    const { clinicId, name, email, phone, date, time } = data;
 
-    if (!companyId || !name || !date || !time) {
+    if (!clinicId || !name || !date || !time) {
       return NextResponse.json({ error: "Campos obrigatórios faltando." }, { status: 400 });
     }
 
@@ -14,10 +14,10 @@ export async function POST(req: Request) {
     // e.g. date: "2023-10-15", time: "14:30"
     const startDateTime = new Date(`${date}T${time}:00`);
     
-    // Find or create customer
-    let customer = await prisma.customer.findFirst({
+    // Find or create patient
+    let patient = await prisma.patient.findFirst({
       where: {
-        companyId,
+        clinicId,
         OR: [
           { email: email || undefined },
           { phone: phone || undefined }
@@ -25,10 +25,10 @@ export async function POST(req: Request) {
       }
     });
 
-    if (!customer) {
-      customer = await prisma.customer.create({
+    if (!patient) {
+      patient = await prisma.patient.create({
         data: {
-          companyId,
+          clinicId,
           name,
           email,
           phone
@@ -38,11 +38,11 @@ export async function POST(req: Request) {
 
     // In a real app we'd let them choose a service.
     // For this MVP, let's grab the first service or create a default one.
-    let service = await prisma.service.findFirst({ where: { companyId } });
+    let service = await prisma.service.findFirst({ where: { clinicId } });
     if (!service) {
       service = await prisma.service.create({
         data: {
-          companyId,
+          clinicId,
           name: "Consulta Padrão",
           duration: 60,
           price: 150.00
@@ -52,11 +52,11 @@ export async function POST(req: Request) {
 
     // In a real app we'd let them choose a professional.
     // For this MVP, let's grab the first professional or create a default one.
-    let professional = await prisma.professional.findFirst({ where: { companyId } });
+    let professional = await prisma.professional.findFirst({ where: { clinicId } });
     if (!professional) {
       professional = await prisma.professional.create({
         data: {
-          companyId,
+          clinicId,
           name: "Profissional Padrão",
           specialty: "Clínico Geral",
           bio: "Profissional de atendimento da clínica."
@@ -67,8 +67,8 @@ export async function POST(req: Request) {
     // Create appointment
     const appointment = await prisma.appointment.create({
       data: {
-        companyId,
-        customerId: customer.id,
+        clinicId,
+        patientId: patient.id,
         serviceId: service.id,
         professionalId: professional.id,
         date: startDateTime, // Prisma Date logic

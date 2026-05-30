@@ -16,7 +16,8 @@ export function Sidebar({ user }: SidebarProps) {
   const links = [
     { href: "/dashboard", label: "Visão Geral", icon: LayoutDashboard },
     { href: "/dashboard/appointments", label: "Agendamentos", icon: Calendar },
-    { href: "/dashboard/customers", label: "Clientes", icon: Users },
+    { href: "/dashboard/patients", label: "Pacientes", icon: Users },
+    { href: "/dashboard/financial", label: "Financeiro", icon: Zap },
     { href: "/dashboard/settings", label: "Configurações", icon: Settings },
   ];
 

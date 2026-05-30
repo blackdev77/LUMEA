@@ -4,9 +4,9 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const { companyName, slug, name, email, password } = await req.json();
+    const { clinicName, slug, name, email, password } = await req.json();
 
-    if (!companyName || !slug || !name || !email || !password) {
+    if (!clinicName || !slug || !name || !email || !password) {
       return NextResponse.json({ error: "Todos os campos são obrigatórios." }, { status: 400 });
     }
 
@@ -24,22 +24,22 @@ export async function POST(req: Request) {
     }
 
     // Check if slug is already in use
-    const existingCompany = await prisma.company.findUnique({
+    const existingClinic = await prisma.clinic.findUnique({
       where: { slug },
     });
 
-    if (existingCompany) {
+    if (existingClinic) {
       return NextResponse.json({ error: "Esta URL (slug) já está em uso por outra empresa." }, { status: 400 });
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create Company and User in a transaction
+    // Create Clinic and User in a transaction
     const result = await prisma.$transaction(async (tx: any) => {
-      const company = await tx.company.create({
+      const clinic = await tx.clinic.create({
         data: {
-          name: companyName,
+          name: clinicName,
           slug,
         },
       });
@@ -50,17 +50,17 @@ export async function POST(req: Request) {
           email,
           password: hashedPassword,
           role: "ADMIN",
-          companyId: company.id,
+          clinicId: clinic.id,
         },
       });
 
-      return { company, user };
+      return { clinic, user };
     });
 
     return NextResponse.json({ 
       success: true, 
       user: { id: result.user.id, email: result.user.email },
-      company: { id: result.company.id, slug: result.company.slug }
+      clinic: { id: result.clinic.id, slug: result.clinic.slug }
     });
 
   } catch (error: any) {

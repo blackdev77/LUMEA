@@ -2,15 +2,15 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { BookingWidget } from "@/components/booking/BookingWidget";
 
-export default async function CompanyBookingPage(props: { params: Promise<{ companySlug: string }> }) {
+export default async function ClinicBookingPage(props: { params: Promise<{ clinicSlug: string }> }) {
   const params = await props.params;
-  const companySlug = params.companySlug;
+  const clinicSlug = params.clinicSlug;
 
-  const company = await prisma.company.findUnique({
-    where: { slug: companySlug },
+  const clinic = await prisma.clinic.findUnique({
+    where: { slug: clinicSlug },
   });
 
-  if (!company) {
+  if (!clinic) {
     notFound();
   }
 
@@ -21,14 +21,14 @@ export default async function CompanyBookingPage(props: { params: Promise<{ comp
         <div className="text-center space-y-4">
           <div className="w-24 h-24 bg-card rounded-full mx-auto border-4 border-white shadow-lg flex items-center justify-center overflow-hidden">
             <span className="text-3xl font-heading font-bold text-primary">
-              {company.name.charAt(0).toUpperCase()}
+              {clinic.name.charAt(0).toUpperCase()}
             </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">{company.name}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{clinic.name}</h1>
           <p className="text-muted-foreground">Agende seu horário de forma rápida e fácil.</p>
         </div>
 
-        <BookingWidget company={company} />
+        <BookingWidget clinic={clinic} />
         
         <div className="text-center mt-12 text-sm text-muted-foreground">
           Powered by <span className="font-bold">LUMEA</span>

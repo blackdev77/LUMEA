@@ -10,7 +10,7 @@ export default async function ProfessionalsPage() {
   const user = await prisma.user.findUnique({ where: { email: session?.user?.email as string } });
   
   const professionals = await prisma.professional.findMany({
-    where: { companyId: user?.companyId },
+    where: { clinicId: user?.clinicId },
     orderBy: { createdAt: "desc" },
   });
 

@@ -6,12 +6,12 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button/Button";
 import { Input } from "@/components/ui/Input/Input";
 
-interface NewCustomerModalProps {
+interface NewPatientModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function NewCustomerModal({ isOpen, onClose }: NewCustomerModalProps) {
+export function NewPatientModal({ isOpen, onClose }: NewPatientModalProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -47,7 +47,7 @@ export function NewCustomerModal({ isOpen, onClose }: NewCustomerModalProps) {
     setError("");
 
     try {
-      const res = await fetch("/api/customers", {
+      const res = await fetch("/api/patients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -55,7 +55,7 @@ export function NewCustomerModal({ isOpen, onClose }: NewCustomerModalProps) {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Erro ao salvar cliente.");
+        throw new Error(data.error || "Erro ao salvar paciente.");
       }
 
       router.refresh();
@@ -71,7 +71,7 @@ export function NewCustomerModal({ isOpen, onClose }: NewCustomerModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-card w-full max-w-lg rounded-2xl shadow-xl border overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold">Novo Cliente</h2>
+          <h2 className="text-xl font-semibold">Novo Paciente</h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
             <X size={20} />
           </button>
@@ -131,7 +131,7 @@ export function NewCustomerModal({ isOpen, onClose }: NewCustomerModalProps) {
               Cancelar
             </Button>
             <Button type="submit" isLoading={isLoading}>
-              Salvar Cliente
+              Salvar Paciente
             </Button>
           </div>
         </form>
@@ -140,13 +140,13 @@ export function NewCustomerModal({ isOpen, onClose }: NewCustomerModalProps) {
   );
 }
 
-export function NewCustomerButton() {
+export function NewPatientButton() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>+ Novo Cliente</Button>
-      <NewCustomerModal
+      <Button onClick={() => setIsOpen(true)}>+ Novo Paciente</Button>
+      <NewPatientModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       />

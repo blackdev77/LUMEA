@@ -9,17 +9,17 @@ import { Input } from "@/components/ui/Input/Input";
 interface NewAppointmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  customers: any[];
+  patients: any[];
   services: any[];
 }
 
-export function NewAppointmentModal({ isOpen, onClose, customers, services }: NewAppointmentModalProps) {
+export function NewAppointmentModal({ isOpen, onClose, patients, services }: NewAppointmentModalProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   
   const [formData, setFormData] = useState({
-    customerId: "",
+    patientId: "",
     serviceId: "",
     date: "",
     time: "",
@@ -75,12 +75,12 @@ export function NewAppointmentModal({ isOpen, onClose, customers, services }: Ne
             <label className="text-sm font-medium">Cliente</label>
             <select
               required
-              value={formData.customerId}
-              onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
+              value={formData.patientId}
+              onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
               className="w-full flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <option value="">Selecione um cliente...</option>
-              {customers.map((c) => (
+              {patients.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
             </select>
